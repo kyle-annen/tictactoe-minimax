@@ -107,8 +107,7 @@ class TicTacToe {
     const moveCoordinates = this.promptUser(`It is player ${currentPlayer}'s turn`, openLocations);
     console.log("Player Move : " + moveCoordinates);
     //player move is the 2d coordinates
-    this.updateBoard(this.board, moveCoordinates, playerToken );
-    this.nextTurn();
+    this.updateBoard(this.board, moveCoordinates, playerToken);
   }
 
   nextTurn() {
@@ -152,12 +151,53 @@ class TicTacToe {
     console.log("");
     console.log("");
   }
+
+
+  checkWin(board = this.board) {
+    console.log("Checking for winning combo");
+    console.log(board);
+   
+    //begin the checking for winning combinations
+    //loop through row / column
+    
+    for (var i = 0; i < 3; i++) {
+      //check rows for winning combo
+      if (board[i][0] === board[i][1] && board[i][1] === board[i][2] ) {
+        //assign the winner
+        if(board[i][0] !== null) {
+           this.winner = board[i][0];
+           break;
+        }
+      //check columns for winning combo
+    } else if (board[0][i] === board[1][i] && board[1][i] === board[2][i]) {
+        if (board[0][i] !== null) {
+          this.winner = board[0][i];
+          break;
+        }
+      //check the diagonals for a winning combo
+      } else if (board[0][0] === board[1][1] && board[1][1] === board[2][2] ||
+                 board[0][2] === board[1][1] && board[1][1] === board[2][0] ) {
+        if (board[1][1] !== null) {
+          this.winner = board[1][1];
+          break;
+        }
+      }
+    }
+    console.log("Winning combo check: " + this.winner);
+  }
   //prompts the turn of current player
   gameLoop(){
     this.renderBoard();
-    while (this.getOpenLocations().length > 0 || this.winner != null) {
+    while (this.getOpenLocations().length > 0 && this.winner === null) {
       this.getUserMove();
       this.renderBoard();
+      this.checkWin();
+      this.nextTurn();
+    }
+    if (this.winner == null) {
+      console.log("THE GAME IS A DRAW");
+    } else {
+      console.log(this.winner + " IS THE WINNER");
     }
   }
 
