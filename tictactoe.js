@@ -109,7 +109,6 @@ class TicTacToe {
     for (var i = 0; i < openLocations.length; i++) {
       openPlays.push(this.boardRef[openLocations[i][0]][openLocations[i][1]]);
     }
-    
     var validPlay = false;
     var moveCoordinates;
     while (validPlay === false) {
@@ -168,6 +167,10 @@ class TicTacToe {
     console.log("");
     console.log("");
   }
+  //announces the turn
+  turnAnnounce(){
+    console.log("It is " + this.players[this.currentPlayer].token + "'s turn.");
+  }
 
   //checks if there is a winner, if there is a winner it updates
   //this.winner to be equal to the winners token
@@ -198,14 +201,17 @@ class TicTacToe {
       }
     }
   }
-  //prompts the turn of current player
+  //main game logic
   gameLoop(){
     this.renderBoard();
+    this.turnAnnounce();
+    //main game loop will exit
     while (this.getOpenLocations().length > 0 && this.winner === null) {
       this.getUserMove();
       this.renderBoard();
       this.checkWin();
       this.nextTurn();
+      this.turnAnnounce();
     }
     if (this.winner == null) {
       console.log("THE GAME IS A DRAW");
