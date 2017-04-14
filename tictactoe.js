@@ -16,6 +16,8 @@ class TicTacToe {
     this.play = this.play.bind(this);
     //initialize class variables
     this.board = [];
+    this.boardRef = [[1,2,3],[4,5,6],[7,8,9]];
+    this.coordRef = {"1":[0,0],"2":[0,1],"3":[0,2],"4":[1,0],"5":[1,1],"6":[1,2],"7":[2,0],"8":[2,1],"9":[2,2]};
     this.players = {};
     this.currentPlayer = 0;
     this.winner = null;
@@ -65,7 +67,7 @@ class TicTacToe {
     console.log(this.players);
   }
 
-  //prompts the users and saves the value
+  //prompts the users and saves the value, used in userOptionsSelect
   promptUser(prompt, validAnswers){
     const index = readlineSync.keyInSelect(validAnswers, prompt);
     if(index > -1 && index < validAnswers.length) {
@@ -99,17 +101,32 @@ class TicTacToe {
     this.renderSpacing(50);
     this.players[1].token = this.promptUser("Pick a token.", tokenOptionsLeft);
   }
-
   //gets the user input and places it in the board
   getUserMove(currentPlayer = this.currentPlayer) {
     const playerToken = this.players[currentPlayer].token;
     const openLocations = this.getOpenLocations();
-    const moveCoordinates = this.promptUser(`It is player ${currentPlayer}'s turn`, openLocations);
+    const openPlays = [];
+    for (var i = 0; i < openLocations.length; i++) {
+      openPlays.push(this.boardRef[openLocations[i][0]][openLocations[i][1]]);
+    }
+    
+    var validPlay = false;
+    var moveCoordinates;
+    while (validPlay === false) {
+      var userInput = parseInt(readlineSync.question('Select an open move: ').trim());
+      if (openPlays.includes(userInput)) {
+        validPlay = true;
+        moveCoordinates = this.coordRef[userInput];
+      } else {
+        console.log(userInput + " is not a valid move, please select another move.");
+      }
+    }
+
     console.log("Player Move : " + moveCoordinates);
     //player move is the 2d coordinates
     this.updateBoard(this.board, moveCoordinates, playerToken);
   }
-
+  //toggles the current user
   nextTurn() {
     this.currentPlayer = this.currentPlayer == 0 ? 1 : 0; 
   }
@@ -152,14 +169,11 @@ class TicTacToe {
     console.log("");
   }
 
-
+  //checks if there is a winner, if there is a winner it updates
+  //this.winner to be equal to the winners token
   checkWin(board = this.board) {
-    console.log("Checking for winning combo");
-    console.log(board);
-   
     //begin the checking for winning combinations
     //loop through row / column
-    
     for (var i = 0; i < 3; i++) {
       //check rows for winning combo
       if (board[i][0] === board[i][1] && board[i][1] === board[i][2] ) {
@@ -183,7 +197,6 @@ class TicTacToe {
         }
       }
     }
-    console.log("Winning combo check: " + this.winner);
   }
   //prompts the turn of current player
   gameLoop(){
